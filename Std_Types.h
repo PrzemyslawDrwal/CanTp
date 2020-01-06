@@ -1,9 +1,6 @@
 #ifndef STD_TYPES_H_
 #define STD_TYPES_H_
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+//AUTOSAR_SWS_StandardTypes.pdf
 
 typedef unsigned char uint8;
 typedef signed char sint8;
@@ -32,8 +29,7 @@ typedef float ieee_float;
 
 typedef uint32 Std_ReturnType;
 
-typedef struct
-{
+typedef struct {
     uint16 vendorID;
     uint16 moduleID;
     uint8 sw_major_version;
