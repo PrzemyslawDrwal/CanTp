@@ -29,8 +29,8 @@ typedef enum {
 
 typedef enum {
     CANTP_FUNCTIONAL,
-    CANTP_PHYSICAL
-} CanTpTxTa;
+    CANTP_PHYSICAL /* Declares the communication type of this TxNsdu */
+} CanTpTxTaType;
 
 typedef struct {
     uint8 nSa;
@@ -51,7 +51,7 @@ typedef struct{
 
 typedef struct{
     const uint32 fcNPduRef;
-    const uint16 fcNPduId;
+    const uint16 fcNPduId; /* Used for grouping of the ID of a PDU and the Reference to a PDU */
 } CanTpTxFcNPdu;
 
 typedef struct {
@@ -68,9 +68,9 @@ typedef struct {
     const uint32 sTMin;
     const CanTpRxAddressingFormat af;
     const CanTpRxPaddingActivation padding;
-    const CanTpTxTa taType;
+    const CanTpTxTaType taType;
     const PduIdType rxNSduRef;
-
+    /* The following parameters needs to be configured for each CAN N-SDU that the CanTp module receives via the CanTpChannel */
 } CanTpRxNSdu;
 
 typedef struct {
@@ -85,36 +85,19 @@ typedef struct {
     const boolean tc;
     const CanTpRxAddressingFormat af;
     const CanTpTxPaddingActivation padding;
-    const CanTpTxTa taType;
+    const CanTpTxTaType taType;
     const uint32 txNSduRef;
-
-} CanTpTxNSdu;
-
-typedef struct {
-
-    const uint16 nSduId;
-    const CanTpNSa *pNSa;
-    const CanTpNTa *pNTa;
-    const CanTpNAe *pNAe;
-    const uint32 nas;
-    const uint32 nbs;
-    const uint32 ncs;
-    const boolean tc;
-    const CanTpRxAddressingFormat af;
-    const CanTpTxPaddingActivation padding;
-    const CanTpTxTa taType;
-    const uint32 txNSduRef;
-
+    /* The following parameters needs to be configured for each CAN N-SDU that the CanTp module transmits via the CanTpChannel */
 } CanTpTxNSdu;
 
 typedef struct {
     const uint16 id;
-    const uint32 rxNPduId;
+    const uint32 rxNPduId; /* Used for grouping of the ID of a PDU and the Reference to a PDU. */
 } CanTpRxNPdu;
 
 typedef struct {
     const uint32 pduRef;
-    const uint16 pduConfirmationPduId;
+    const uint16 pduConfirmationPduId; /* Used for grouping of the ID of a PDU and the Reference to a PDU. */
 } CanTpTxNPdu;
 
 typedef struct {
@@ -125,6 +108,7 @@ typedef struct {
         const uint32 txNSduCnt;
     } nSdu;
     const CanTpChannelMode channelMode;
+    /* This container contains the configuration parameters of the CanTp channel. */
 } CanTpChannel;
 
 
@@ -133,6 +117,7 @@ typedef struct {
     const uint32 maxChannelCnt;
     const CanTpChannel *pChannel;
     const uint8 paddingByte;
-} CanTp_ConfigType;
+    /* This container contains the configuration parameters and sub containers of the AUTOSAR CanTp module */
+} CanTpConfig;
 
 #endif /* INCLUDE_CANTP_H_ */
