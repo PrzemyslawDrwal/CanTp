@@ -27,7 +27,7 @@ typedef enum {
 typedef enum {
     CANTP_FUNCTIONAL,
     CANTP_PHYSICAL
-} CanTpTxTaType;
+} CanTpTxTa;
 
 typedef struct {
     uint8 nSa;
@@ -52,6 +52,7 @@ typedef struct{
 } CanTpTxFcNPdu;
 
 typedef struct {
+
     const uint16 nSduId;
     const CanTpNSa *pNSa;
     const CanTpNTa *pNTa;
@@ -61,13 +62,48 @@ typedef struct {
     const uint32 nbr;
     const uint32 ncr;
     const uint16 wftMax;
-
     const uint32 sTMin;
     const CanTpRxAddressingFormat af;
     const CanTpRxPaddingActivation padding;
-    const CanTpTxTaType taType;
+    const CanTpTxTa taType;
     const PduIdType rxNSduRef;
+
 } CanTpRxNSdu;
+
+typedef struct{
+
+    const uint16 nSduId;
+    const CanTpNSa *pNSa;
+    const CanTpNTa *pNTa;
+    const CanTpNAe *pNAe;
+    const uint32 nas;
+    const uint32 nbs;
+    const uint32 ncs;
+    const boolean tc;
+    const CanTpRxAddressingFormat af;
+    const CanTpTxPaddingActivation padding;
+    const CanTpTxTa taType;
+    const uint32 txNSduRef;
+
+} CanTpTxNSdu;
+
+typedef struct
+{
+    const uint16 nSduId;
+    const CanTpNSa *pNSa;
+    const CanTpNTa *pNTa;
+    const CanTpNAe *pNAe;
+    const uint32 nas;
+    const uint32 nbs;
+    const uint32 ncs;
+    const boolean tc;
+    const CanTpRxAddressingFormat af;
+    const CanTpTxPaddingActivation padding;
+    const CanTpTxTa taType;
+    const uint32 txNSduRef;
+
+} CanTpTxNSdu;
+
 
 
 #endif /* INCLUDE_CANTP_H_ */
