@@ -70,7 +70,7 @@ typedef struct {
 
 } CanTpRxNSdu;
 
-typedef struct{
+typedef struct {
 
     const uint16 nSduId;
     const CanTpNSa *pNSa;
@@ -87,8 +87,8 @@ typedef struct{
 
 } CanTpTxNSdu;
 
-typedef struct
-{
+typedef struct {
+
     const uint16 nSduId;
     const CanTpNSa *pNSa;
     const CanTpNTa *pNTa;
@@ -104,6 +104,32 @@ typedef struct
 
 } CanTpTxNSdu;
 
+typedef struct {
+    const uint16 id;
+    const uint32 rxNPduId;
+} CanTpRxNPdu;
 
+typedef struct {
+    const uint32 pduRef;
+    const uint16 pduConfirmationPduId;
+} CanTpTxNPdu;
+
+typedef struct {
+    struct {
+        const CanTpRxNSdu *rx;
+        const uint32 rxNSduCnt;
+        const CanTpTxNSdu *tx;
+        const uint32 txNSduCnt;
+    } nSdu;
+    const CanTpChannelMode channelMode;
+} CanTpChannel;
+
+
+typedef struct {
+    const uint32 mainFunctionPeriod;
+    const uint32 maxChannelCnt;
+    const CanTpChannel *pChannel;
+    const uint8 paddingByte;
+} CanTp_ConfigType;
 
 #endif /* INCLUDE_CANTP_H_ */
