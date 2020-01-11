@@ -4,19 +4,22 @@
 typedef enum {
 	CANTP_MODE_FULL_DUPLEX,
 	CANTP_MODE_HALF_DUPLEX
+	/* This container contains the configuration parameters of the CanTp channel. */
 } CanTpChannelMode;
 
 typedef enum {
-    CANTP_EXTENDED,
-    CANTP_MIXED,
-    CANTP_MIXED29BIT,
-    CANTP_NORMALFIXED,
-    CANTP_STANDARD
+    CANTP_EXTENDED, 	/* Extended addressing format */
+    CANTP_MIXED,		/* Mixed 11 bit addressing format */
+    CANTP_MIXED29BIT,	/* Mixed 29 bit addressing format */
+    CANTP_NORMALFIXED,	/* Normal fixed addressing format */
+    CANTP_STANDARD		/* Normal addressing format */
+	/* Declares which communication addressing models supported for this RxNSdu. */
 } CanTpRxAddressingFormat;
 
 typedef enum {
     CANTP_OFF,
     CANTP_ON
+	/* Defines if the receive frame uses padding or not. This parameter is restricted to 8 byte N-PDUs */
 } CanTpRxPaddingActivation;
 
 typedef enum {
