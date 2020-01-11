@@ -1,6 +1,24 @@
 #ifndef INCLUDE_CANTP_H_
 #define INCLUDE_CANTP_H_
 
+#define CANTP_E_INIT_FAILED (0x04u) /* Module initialization has failed, e.g. CanTp_Init() called with an invalid pointer in postbuild. */
+#define CANTP_E_UNINIT (0x20u)	/* API service used without module initialization :On any API call except CanTp_Init() and CanTp_GetVersionInfo() if CanTp is in state CANTP_OFF" */
+#define CANTP_E_INVALID_TX_ID (0x30u) /* Invalid Transmit PDU identifier(e.g. aservice is called with an inexistent Tx PDU identifier */
+#define CANTP_E_INVALID_RX_ID (0x40u) /* Invalid Receive PDU identifier(e.g. a service is called with an inexistent Rx PDU identifier) */
+#define CANTP_E_PADDING (0x70u) /* PDU received with a length smaller than 8 bytes.(i.e. PduInfoPtr.SduLength < 8) */
+
+#define CANTP_E_PARAM_CONFIG (0x01u)
+#define CANTP_E_PARAM_ID (0x02u)
+#define CANTP_E_PARAM_POINTER (0x03u)
+#define CANTP_E_INVALID_TATYPE (0x90u)
+#define CANTP_E_OPER_NOT_SUPPORTED (0xA0u)
+#define CANTP_E_COM (0xB0u)
+#define CANTP_E_RX_COM (0xC0u)
+#define CANTP_E_TX_COM (0xD0u)
+
+
+
+
 typedef enum {
 	CANTP_MODE_FULL_DUPLEX,
 	CANTP_MODE_HALF_DUPLEX
