@@ -123,7 +123,7 @@ CanTp_StateType CanTpState = CANTP_OFF;
 static const CanTpConfig *CanTpConfigPtr = NULL_PTR;
 static CanTp_ChannelRtType CanTpRt[CANTP_MAX_NUM_OF_CHANNEL];
 
-void CanTp_Init(const CanTpConfig *pConfig)
+void CanTp_Init(const CanTpConfig *CfgPtr)
 {
 	uint32_least counter;
     uint32_least channel_counter;
@@ -137,15 +137,15 @@ void CanTp_Init(const CanTpConfig *pConfig)
     uint8 *p_cleared_data = (uint8 *)&CanTpRt[0x00u];
     uint32_least temp = sizeof(CanTpRt);
 
-    if (pConfig != NULL_PTR) {
-        CanTpConfigPtr = pConfig;
+    if (CfgPtr != NULL_PTR) {
+        CanTpConfigPtr = CfgPtr;
 
         for (counter = 0x00u; counter < temp; counter++) {
             p_cleared_data[counter] = 0x00u;
         }
-        for ( channel_counter = 0x00u; channel_counter < pConfig->maxChannelCnt; channel_counter++) {
+        for ( channel_counter = 0x00u; channel_counter < CfgPtr->maxChannelCnt; channel_counter++) {
             p_rt_cha = &CanTpRt[channel_counter];
-            p_cfg_cha = &pConfig->pChannel[channel_counter];
+            p_cfg_cha = &CfgPtr->pChannel[channel_counter];
 
             for (rt_sdu_counter = 0x00u; rt_sdu_counter < CANTP_MAX_NUM_OF_N_SDU; rt_sdu_counter++) {
                 for (cfg_sdu_counter = 0x00u; cfg_sdu_counter < p_cfg_cha->nSdu.txNSduCnt; cfg_sdu_counter++) {
