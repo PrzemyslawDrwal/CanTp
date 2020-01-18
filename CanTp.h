@@ -16,6 +16,9 @@
 #define CANTP_E_RX_COM (0xC0u)
 #define CANTP_E_TX_COM (0xD0u)
 
+#define CANTP_RX (0x01u)
+
+#define CANTP_TX (0x02u)
 
 
 
@@ -35,15 +38,13 @@ typedef enum {
 } CanTpRxAddressingFormat;
 
 typedef enum {
-    CANTP_OFF,
+	CANTP_OFF,
     CANTP_ON
-	/* Defines if the receive frame uses padding or not. This parameter is restricted to 8 byte N-PDUs */
-} CanTpRxPaddingActivation;
+} CanTp_StateType;
 
-typedef enum {
-    CANTP_OFF,
-    CANTP_ON
-} CanTpTxPaddingActivation;
+typedef CanTp_StateType CanTpRxPaddingActivation;
+
+typedef CanTp_StateType CanTpTxPaddingActivation;
 
 typedef enum {
     CANTP_FUNCTIONAL,
@@ -137,5 +138,11 @@ typedef struct {
     const uint8 paddingByte;
     /* This container contains the configuration parameters and sub containers of the AUTOSAR CanTp module */
 } CanTpConfig;
+
+
+
+void CanTp_Init(const CanTpConfig *pConfig);
+
+
 
 #endif /* INCLUDE_CANTP_H_ */
