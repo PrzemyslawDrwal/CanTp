@@ -174,3 +174,79 @@ void CanTp_Init(const CanTpConfig *CfgPtr)
         CanTpState = CANTP_ON;
     }
 }
+
+void CanTp_Shutdown(void) {
+    if ((CanTp_StateType)CanTpState != (CanTp_StateType)CANTP_OFF) {
+        CanTpState = CANTP_OFF;
+    }
+    else {
+        CanTp_ReportError(0x00u, CANTP_SHUTDOWN, CANTP_E_UNINIT);
+    }
+}
+
+Std_ReturnType CanTp_Transmit(PduIdType CanTpTxSduId, const PduInfoType *CanTpTxInfoPtr) {
+    CanTp_NSduType *N_Sdu = NULL_PTR;
+    Std_ReturnType r = E_NOT_OK;
+
+    if ((CanTp_StateType)CanTpState == (CanTp_StateType)CANTP_ON) {
+        if (CanTpTxInfoPtr != NULL_PTR) {
+            if (CanTp_GetNSduFromPduId(CanTpTxSduId, &N_Sdu) == E_OK) {
+                if (CanTpTxInfoPtr->MetaDataPtr != NULL_PTR) {
+                	N_Sdu->tx.has_meta_data = TRUE;
+                    if (N_Sdu->tx.cfg->af == CANTP_MIXED29BIT) {
+                    	N_Sdu->tx.saved_n_sa.nSa = CanTpTxInfoPtr->MetaDataPtr[0x00u];
+                    	N_Sdu->tx.saved_n_ta.nTa = CanTpTxInfoPtr->MetaDataPtr[0x01u];
+                    	N_Sdu->tx.saved_n_ae.nAe = CanTpTxInfoPtr->MetaDataPtr[0x02u];
+                    }
+                    else if (N_Sdu->tx.cfg->af == CANTP_NORMALFIXED) {
+                    	N_Sdu->tx.saved_n_sa.nSa = CanTpTxInfoPtr->MetaDataPtr[0x00u];
+                    	N_Sdu->tx.saved_n_ta.nTa = CanTpTxInfoPtr->MetaDataPtr[0x01u];
+                    }
+                    else if (N_Sdu->tx.cfg->af == CANTP_MIXED) {
+                    	N_Sdu->tx.saved_n_ae.nAe = CanTpTxInfoPtr->MetaDataPtr[0x00u];
+                    }
+                    else if (N_Sdu->tx.cfg->af == CANTP_EXTENDED) {
+                    	N_Sdu->tx.saved_n_ta.nTa = CanTpTxInfoPtr->MetaDataPtr[0x00u];
+                    }
+                }
+                else {
+                	N_Sdu->tx.has_meta_data = FALSE;
+                }
+                if ((N_Sdu->tx.taskState != CANTP_PROCESSING) && (CanTpTxInfoPtr->SduLength > 0x0000u) && (CanTpTxInfoPtr->SduLength <= 0x0FFFu)) {
+                	N_Sdu->tx.buf.size = CanTpTxInfoPtr->SduLength;
+
+                    if ((((N_Sdu->tx.cfg->af == CANTP_STANDARD) || (N_Sdu->tx.cfg->af == CANTP_NORMALFIXED)) && (CanTpTxInfoPtr->SduLength <= 0x07u)) || (((N_Sdu->tx.cfg->af == CANTP_EXTENDED) ||  (N_Sdu->tx.cfg->af == CANTP_MIXED) ||  (N_Sdu->tx.cfg->af == CANTP_MIXED29BIT)) && (CanTpTxInfoPtr->SduLength <= 0x06u))) {
+                    	N_Sdu->tx.shared.state = CANTP_TX_FRAME_STATE_SF_TX_REQUEST;
+                        r = E_OK;
+                    }
+                    else
+                    {
+                        if (N_Sdu->tx.cfg->taType == CANTP_PHYSICAL) {
+                        	N_Sdu->tx.shared.state = CANTP_TX_FRAME_STATE_FF_TX_REQUEST;
+                            r = E_OK;
+                        }
+                    }
+                    if (r == E_OK) {
+                    	N_Sdu->tx.taskState = CANTP_PROCESSING;
+                    }
+                }
+            }
+            else
+            {
+                CanTp_ReportError(0x00u, CANTP_TRANSMIT, CANTP_E_INVALID_TX_ID);
+            }
+        }
+        else
+        {
+            CanTp_ReportError(0x00u, CANTP_TRANSMIT, CANTP_E_PARAM_POINTER);
+        }
+    }
+    else
+    {
+        CanTp_ReportError(0x00u, CANTP_TRANSMIT, CANTP_E_UNINIT);
+    }
+
+    return r;
+}
+
+
