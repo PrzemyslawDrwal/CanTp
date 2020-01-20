@@ -20,7 +20,8 @@
 
 #define CANTP_TX (0x02u)
 
-
+#define CANTP_SHUTDOWN (0x02u)
+#define CANTP_TRANSMIT (0x49u)
 
 typedef enum {
 	CANTP_MODE_FULL_DUPLEX,
@@ -141,8 +142,8 @@ typedef struct {
 
 
 
-void CanTp_Init(const CanTpConfig *pConfig);
+void CanTp_Init(const CanTpConfig *CfgPtr);
 
-
+void CanTp_Shutdown(void);
 
 #endif /* INCLUDE_CANTP_H_ */
