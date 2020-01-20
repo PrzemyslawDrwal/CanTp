@@ -231,22 +231,42 @@ Std_ReturnType CanTp_Transmit(PduIdType CanTpTxSduId, const PduInfoType *CanTpTx
                     }
                 }
             }
-            else
-            {
+            else {
                 CanTp_ReportError(0x00u, CANTP_TRANSMIT, CANTP_E_INVALID_TX_ID);
             }
         }
-        else
-        {
+        else {
             CanTp_ReportError(0x00u, CANTP_TRANSMIT, CANTP_E_PARAM_POINTER);
         }
     }
-    else
-    {
+    else {
         CanTp_ReportError(0x00u, CANTP_TRANSMIT, CANTP_E_UNINIT);
     }
 
     return r;
 }
 
+Std_ReturnType CanTp_CancelTransmit(PduIdType CanTpTxSduId) {
+    CanTp_NSduType *N_Sdu;
+    Std_ReturnType r = E_NOT_OK;
+    if ((CanTp_StateType)CanTpState == (CanTp_StateType)CANTP_ON) {
+        if ((CanTp_GetNSduFromPduId(CanTpTxSduId, &N_Sdu) == E_OK) && ((N_Sdu->dir & CANTP_TX) != 0x00u)) {
+            if (N_Sdu->tx.taskState == CANTP_PROCESSING) {
+            	N_Sdu->tx.taskState = CANTP_WAIT;
+                PduR_CanTpTxConfirmation(N_Sdu->tx.cfg->nSduId, E_NOT_OK);
+                r = E_OK;
+            }
+            else {
+                CanTp_ReportRuntimeError(0x00u, CANTP_CANCEL_TRANSMIT, CANTP_E_OPER_NOT_SUPPORTED);
+            }
+        }
+        else {
+            CanTp_ReportError(0x00u, CANTP_CANCEL_TRANSMIT, CANTP_E_PARAM_ID);
+        }
+    }
+    else {
+        CanTp_ReportError(0x00u, CANTP_CANCEL_TRANSMIT, CANTP_E_UNINIT);
+    }
 
+    return r;
+}
