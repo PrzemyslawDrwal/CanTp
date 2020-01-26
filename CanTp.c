@@ -270,3 +270,124 @@ Std_ReturnType CanTp_CancelTransmit(PduIdType CanTpTxSduId) {
 
     return r;
 }
+
+Std_ReturnType CanTp_CancelReceive(PduIdType CanTpRxSduId)
+{
+    CanTp_NSduType *N_Sdu;
+    CanTp_TaskStateType task_state;
+    PduLengthType n_ae_field_size;
+    Std_ReturnType r = E_NOT_OK;
+
+    if ((CanTp_StateType)CanTpState == (CanTp_StateType)CANTP_ON) {
+        if ((CanTp_GetNSduFromPduId(CanTpRxSduId, &N_Sdu) == E_OK) && ((N_Sdu->dir & CANTP_RX) != 0x00u)) {
+            n_ae_field_size = CanTp_GetAddrInfoSizeInPayload(N_Sdu->rx.cfg->af);
+            task_state = N_Sdu->rx.shared.taskState;
+            if (task_state == CANTP_PROCESSING) { {
+                	N_Sdu->rx.shared.taskState = CANTP_WAIT;
+                    PduR_CanTpRxIndication(N_Sdu->rx.cfg->nSduId, E_NOT_OK);
+                    r = E_OK;
+                }
+            }
+        }
+    }
+
+    return r;
+}
+
+#if (CANTP_E_PARAM_ID  == STD_ON)
+
+Std_ReturnType CanTp_ChangeParameter(PduIdType id, TPParameterType parameter, uint16 value)
+{
+    CanTp_NSduType *N_Sdu;
+    CanTp_TaskStateType task_state;
+    Std_ReturnType r = E_NOT_OK;
+
+    if ((CanTp_StateType)CanTpState == (CanTp_StateType)CANTP_ON){
+        if (CanTp_GetNSduFromPduId(id, &N_Sdu) == E_OK) {
+            task_state = N_Sdu->rx.shared.taskState;
+
+            if (task_state != CANTP_PROCESSING) {
+                switch (parameter)  {
+                    case TP_STMIN:
+                    {
+                        if ((value <= 0xFFu) && ((N_Sdu->dir & CANTP_RX) != 0x00u)) {
+                        	N_Sdu->rx.shared.m_param.st_min = value;
+                            r = E_OK;
+                        }
+
+                        break;
+                    }
+                    case TP_BS:
+                    {
+                        if ((value <= 0xFFu) && ((N_Sdu->dir & CANTP_RX) != 0x00u)) {
+                        	N_Sdu->rx.shared.m_param.bs = (uint8)value;
+
+                            r = E_OK;
+                        }
+
+                        break;
+                    }
+                    case TP_BC:
+                    default:
+                        break;
+                }
+
+            }
+        }
+    }
+
+    return r;
+}
+
+
+
+#endif /* #if (CANTP_E_PARAM_ID  == STD_ON) */
+
+#if (CANTP_READ_PARAMETER_API == STD_ON)
+
+Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint16 *pValue)
+{
+    CanTp_NSduType *N_Sdu;
+    uint16 value;
+    Std_ReturnType r = E_NOT_OK;
+
+    if ((CanTp_StateType)CanTpState == (CanTp_StateType)CANTP_ON) {
+        if (pValue != NULL_PTR) { {
+                if ((N_Sdu->dir & CANTP_RX) != 0x00u) {
+                    switch (parameter)
+                    {
+                        case TP_STMIN:
+                        {
+                            value = (uint16)N_Sdu->rx.shared.m_param.st_min;
+
+                            *pValue = value;
+                            r = E_OK;
+
+                            break;
+                        }
+                        case TP_BS:
+                        {
+                            value = (uint16)N_Sdu->rx.shared.m_param.bs;
+
+                            *pValue = value;
+                            r = E_OK;
+
+                            break;
+                        }
+                        case TP_BC:
+                        default:
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    return r;
+}
+
+#endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
