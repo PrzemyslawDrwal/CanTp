@@ -194,6 +194,18 @@ void CanTp_Shutdown(void) {
     }
 }
 
+//void CanTp_RxIndication(
+//	PduIdType RxPduId,
+//	const PduInfoType* PduInfoPtr
+//)
+
+
+//void CanTp_TxConfirmation(
+//	PduIdType TxPduId,
+//	Std_ReturnType result
+//)
+
+
 
 Std_ReturnType CanTp_Transmit(PduIdType CanTpTxSduId, const PduInfoType *CanTpTxInfoPtr) {
     CanTp_NSduType *N_Sdu = NULL_PTR;
