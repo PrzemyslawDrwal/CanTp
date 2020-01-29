@@ -19,12 +19,14 @@ typedef enum
     CANTP_PROCESSING
 } CanTp_TaskStateType;
 
+
 typedef struct
 {
     uint8 can[0x08u];
     PduLengthType size;
     PduLengthType rmng;
 } CanTp_NSduBufferType;
+
 
 typedef enum
 {
@@ -43,6 +45,7 @@ typedef enum
     CANTP_FRAME_STATE_OK,
     CANTP_FRAME_STATE_ABORT
 } CanTp_FrameStateType;
+
 
 typedef struct
 {
@@ -73,6 +76,7 @@ typedef struct
     } shared;
 } CanTpRxConnection;
 
+
 typedef struct
 {
     const CanTpTxNSdu *cfg;
@@ -96,6 +100,7 @@ typedef struct
     } shared;
 } CanTpTxConnection;
 
+
 typedef struct
 {
 	CanTpRxConnection rx;
@@ -104,12 +109,14 @@ typedef struct
     uint8_least dir;
     uint32 t_flag;
 } CanTp_NSduType;
+
 
 typedef struct
 {
 	CanTp_NSduType sdu[CANTP_MAX_NUM_OF_N_SDU];
 } CanTp_ChannelRtType;
 
+
 typedef struct
 {
 	CanTpRxConnection rx;
@@ -119,9 +126,11 @@ typedef struct
     uint32 t_flag;
 } CanTp_NSduType;
 
+
 CanTp_StateType CanTpState = CANTP_OFF;
 static const CanTpConfig *CanTpConfigPtr = NULL_PTR;
 static CanTp_ChannelRtType CanTpRt[CANTP_MAX_NUM_OF_CHANNEL];
+
 
 void CanTp_Init(const CanTpConfig *CfgPtr)
 {
@@ -175,6 +184,7 @@ void CanTp_Init(const CanTpConfig *CfgPtr)
     }
 }
 
+
 void CanTp_Shutdown(void) {
     if ((CanTp_StateType)CanTpState != (CanTp_StateType)CANTP_OFF) {
         CanTpState = CANTP_OFF;
@@ -183,6 +193,7 @@ void CanTp_Shutdown(void) {
         CanTp_ReportError(0x00u, CANTP_SHUTDOWN, CANTP_E_UNINIT);
     }
 }
+
 
 Std_ReturnType CanTp_Transmit(PduIdType CanTpTxSduId, const PduInfoType *CanTpTxInfoPtr) {
     CanTp_NSduType *N_Sdu = NULL_PTR;
@@ -246,6 +257,7 @@ Std_ReturnType CanTp_Transmit(PduIdType CanTpTxSduId, const PduInfoType *CanTpTx
     return r;
 }
 
+
 Std_ReturnType CanTp_CancelTransmit(PduIdType CanTpTxSduId) {
     CanTp_NSduType *N_Sdu;
     Std_ReturnType r = E_NOT_OK;
@@ -271,6 +283,7 @@ Std_ReturnType CanTp_CancelTransmit(PduIdType CanTpTxSduId) {
     return r;
 }
 
+
 Std_ReturnType CanTp_CancelReceive(PduIdType CanTpRxSduId)
 {
     CanTp_NSduType *N_Sdu;
@@ -293,6 +306,7 @@ Std_ReturnType CanTp_CancelReceive(PduIdType CanTpRxSduId)
 
     return r;
 }
+
 
 #if (CANTP_E_PARAM_ID  == STD_ON)
 
@@ -341,6 +355,7 @@ Std_ReturnType CanTp_ChangeParameter(PduIdType id, TPParameterType parameter, ui
 
 
 
+
 #endif /* #if (CANTP_E_PARAM_ID  == STD_ON) */
 
 #if (CANTP_READ_PARAMETER_API == STD_ON)
@@ -379,6 +394,7 @@ Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint
                         {
                             break;
                         }
+						
                     }
                 }
             }
@@ -389,5 +405,6 @@ Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint
 
     return r;
 }
+
 
 #endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
