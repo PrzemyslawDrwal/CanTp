@@ -12,7 +12,7 @@
 #ifndef PDUR_H
 #include "PduR.h"
 #endif /* #ifndef PDUR_H */
-#include <CUnit/CUnit.h>
+#include <Std_Types.h>
 
 typedef enum
 {
@@ -210,8 +210,8 @@ void CanTp_Shutdown(void) {
 void CanTp_TxConfirmation(PduIdType CanTpTxPduId) /** @req CANTP076 */
 {
 	PduIdType CanTpNSduId;
-	const CanTp_RxNSduType *rxConfigParams = NULL;
-	const CanTp_TxNSduType *txConfigParams = NULL;
+	const CanTpRxNSdu *rxConfigParams;
+	const CanTpTxNSdu *txConfigParams;
 
 	DEBUG( DEBUG_MEDIUM, "CanTp_TxConfirmation called.\n" );
 
@@ -221,7 +221,7 @@ void CanTp_TxConfirmation(PduIdType CanTpTxPduId) /** @req CANTP076 */
 			SERVICE_ID_CANTP_TX_CONFIRMATION, CANTP_E_INVALID_TX_ID ); /** @req CANTP158 */
 
 	/** @req CANTP236 */
-	if( CanTp_ConfigPtr->CanTpRxIdList[CanTpTxPduId].CanTpNSduIndex != 0xFFFF ) {
+	if( CanTpTxPduId->CanTpRxIdList[CanTpTxPduId].CanTpNSduIndex != 0xFFFF ) {
 		CanTpNSduId = CanTp_ConfigPtr->CanTpRxIdList[CanTpTxPduId].CanTpNSduIndex;
 		if ( CanTp_ConfigPtr->CanTpNSduList[CanTpNSduId].direction == IS015765_TRANSMIT ) {
 			txConfigParams = (CanTp_TxNSduType*)&CanTp_ConfigPtr->CanTpNSduList[CanTpNSduId].configData.CanTpTxNSdu;
@@ -352,7 +352,7 @@ Std_ReturnType CanTp_CancelReceive(PduIdType CanTpRxSduId)
 }
 
 
-if (CANTP_E_PARAM_ID  == STD_ON)
+#if (CANTP_E_PARAM_ID  == STD_ON)
 
 Std_ReturnType CanTp_ChangeParameter(PduIdType id, TPParameterType parameter, uint16 value)
 {
@@ -400,9 +400,9 @@ Std_ReturnType CanTp_ChangeParameter(PduIdType id, TPParameterType parameter, ui
 
 
 
-endif /* #if (CANTP_E_PARAM_ID  == STD_ON) */
+#endif /* #if (CANTP_E_PARAM_ID  == STD_ON) */
 
-if (CANTP_READ_PARAMETER_API == STD_ON)
+#if (CANTP_READ_PARAMETER_API == STD_ON)
 
 Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint16 *pValue)
 {
@@ -449,7 +449,7 @@ Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint
 
     return r;
 }
-endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
+#endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
 
 PduLengthType getPduLength(
 		const CanTp_AddressingFormantType *formatType,
