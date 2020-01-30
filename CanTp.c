@@ -134,7 +134,7 @@ static CanTp_ChannelRtType CanTpRt[CANTP_MAX_NUM_OF_CHANNEL];
 
 static CanTp_FrameStateType CanTp_LDataConTSF(CanTp_NSduType *pNSdu);
 static CanTp_FrameStateType CanTp_LDataConTFF(CanTp_NSduType *pNSdu);
-static CanTp_FrameStateType CanTp_LDataConTCF(CanTp_NSduType *pNSdu);
+static CanTp_FrameStateType CanTp_LDataConTFC(CanTp_NSduType *pNSdu);
 
 
 void CanTp_Init(const CanTpConfig *CfgPtr)
@@ -238,7 +238,7 @@ void CanTp_TxConfirmation(PduIdType TxPduId)
 					next_state = CanTp_LDataConTFF(p_n_sdu);
                 	break;
                 case(CANTP_TX_FRAME_STATE_CF_TX_CONFIRMATION):
-					next_state = CanTp_LDataConTCF(p_n_sdu);
+					next_state = CanTp_LDataConTFC(p_n_sdu);
                 	break;
                 default:
                 	break;
