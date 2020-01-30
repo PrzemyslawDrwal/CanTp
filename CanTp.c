@@ -357,6 +357,7 @@ Std_ReturnType CanTp_CancelReceive(PduIdType CanTpRxSduId)
 
     return r;
 }
+}
 
 
 #if (CANTP_E_PARAM_ID  == STD_ON)
