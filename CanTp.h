@@ -23,6 +23,11 @@
 #define CANTP_SHUTDOWN (0x02u)
 #define CANTP_TRANSMIT (0x49u)
 
+
+#define run_test()
+#define test_start() 
+#define test_end() 
+	
 typedef enum {
 	CANTP_MODE_FULL_DUPLEX,
 	CANTP_MODE_HALF_DUPLEX
@@ -145,5 +150,7 @@ typedef struct {
 void CanTp_Init(const CanTpConfig *CfgPtr);
 
 void CanTp_Shutdown(void);
+
+
 
 #endif /* INCLUDE_CANTP_H_ */

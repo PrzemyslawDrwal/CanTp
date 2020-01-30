@@ -12,6 +12,7 @@
 #ifndef PDUR_H
 #include "PduR.h"
 #endif /* #ifndef PDUR_H */
+#include <CUnit/CUnit.h>
 
 typedef enum
 {
@@ -320,7 +321,7 @@ Std_ReturnType CanTp_CancelReceive(PduIdType CanTpRxSduId)
 }
 
 
-#if (CANTP_E_PARAM_ID  == STD_ON)
+if (CANTP_E_PARAM_ID  == STD_ON)
 
 Std_ReturnType CanTp_ChangeParameter(PduIdType id, TPParameterType parameter, uint16 value)
 {
@@ -368,9 +369,9 @@ Std_ReturnType CanTp_ChangeParameter(PduIdType id, TPParameterType parameter, ui
 
 
 
-#endif /* #if (CANTP_E_PARAM_ID  == STD_ON) */
+endif /* #if (CANTP_E_PARAM_ID  == STD_ON) */
 
-#if (CANTP_READ_PARAMETER_API == STD_ON)
+if (CANTP_READ_PARAMETER_API == STD_ON)
 
 Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint16 *pValue)
 {
@@ -417,6 +418,4 @@ Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint
 
     return r;
 }
-
-
-#endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
+endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
