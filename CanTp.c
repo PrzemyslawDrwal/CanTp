@@ -132,6 +132,10 @@ CanTp_StateType CanTpState = CANTP_OFF;
 static const CanTpConfig *CanTpConfigPtr = NULL_PTR;
 static CanTp_ChannelRtType CanTpRt[CANTP_MAX_NUM_OF_CHANNEL];
 
+static CanTp_FrameStateType CanTp_LDataConTSF(CanTp_NSduType *pNSdu);
+static CanTp_FrameStateType CanTp_LDataConTFF(CanTp_NSduType *pNSdu);
+static CanTp_FrameStateType CanTp_LDataConTCF(CanTp_NSduType *pNSdu);
+
 
 void CanTp_Init(const CanTpConfig *CfgPtr)
 {
