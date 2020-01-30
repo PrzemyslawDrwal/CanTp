@@ -207,36 +207,43 @@ void CanTp_Shutdown(void) {
 //)
 
 
-void CanTp_TxConfirmation(PduIdType CanTpTxPduId) /** @req CANTP076 */
+void CanTp_TxConfirmation(PduIdType TxPduId)
 {
-	PduIdType CanTpNSduId;
-	const CanTpRxNSdu *rxConfigParams;
-	const CanTpTxNSdu *txConfigParams;
+    CanTp_FrameStateType next_state;
+    CanTp_NSduType *p_n_sdu;
 
-	DEBUG( DEBUG_MEDIUM, "CanTp_TxConfirmation called.\n" );
+            if ((p_n_sdu->dir & CANTP_RX) != 0x00u) {
+                next_state = CANTP_FRAME_STATE_INVALID;
+                if (p_n_sdu->rx.shared.state == CANTP_RX_FRAME_STATE_FC_TX_CONFIRMATION) {
+                    next_state = CanTp_LDataConRFC(p_n_sdu);
+                }
 
-	VALIDATE_NO_RV( CanTpRunTimeData.internalState == CANTP_ON,
-			SERVICE_ID_CANTP_TX_CONFIRMATION, CANTP_E_UNINIT ); /** @req CANTP031 */
-	VALIDATE_NO_RV( CanTpTxPduId < CanTp_ConfigPtr->CanTpGeneral->number_of_pdus,
-			SERVICE_ID_CANTP_TX_CONFIRMATION, CANTP_E_INVALID_TX_ID ); /** @req CANTP158 */
+                if (next_state != CANTP_FRAME_STATE_INVALID) {
+                    p_n_sdu->rx.shared.state = next_state;
+                }
+            }
 
-	/** @req CANTP236 */
-	if( CanTpTxPduId->CanTpRxIdList[CanTpTxPduId].CanTpNSduIndex != 0xFFFF ) {
-		CanTpNSduId = CanTp_ConfigPtr->CanTpRxIdList[CanTpTxPduId].CanTpNSduIndex;
-		if ( CanTp_ConfigPtr->CanTpNSduList[CanTpNSduId].direction == IS015765_TRANSMIT ) {
-			txConfigParams = (CanTp_TxNSduType*)&CanTp_ConfigPtr->CanTpNSduList[CanTpNSduId].configData.CanTpTxNSdu;
-			CanTp_SimplexChannelPrivateType *txRuntime = &CanTpRunTimeData.runtimeDataList[txConfigParams->CanTpTxChannel].SimplexChnlList[CANTP_TX_CHANNEL];
-			if(txRuntime->iso15765.state == TX_WAIT_TX_CONFIRMATION) {
-				handleNextTxFrameSent(txConfigParams, txRuntime);
-			}
-		} else {
-			rxConfigParams = (CanTp_RxNSduType*)&CanTp_ConfigPtr->CanTpNSduList[CanTpNSduId].configData.CanTpRxNSdu;
-			CanTpRunTimeData.runtimeDataList[rxConfigParams->CanTpRxChannel].SimplexChnlList[CANTP_RX_CHANNEL].iso15765.NasNarPending = FALSE;
-		}
-	}
-
-
-}
+            if ((p_n_sdu->dir & CANTP_TX) != 0x00u)
+            {
+                next_state = CANTP_FRAME_STATE_INVALID;
+                switch(p_n_sdu->tx.shared.state) {
+                case(CANTP_TX_FRAME_STATE_SF_TX_CONFIRMATION):
+					next_state = CanTp_LDataConTSF(p_n_sdu);
+                	break;
+                case(CANTP_TX_FRAME_STATE_FF_TX_CONFIRMATION):
+					next_state = CanTp_LDataConTFF(p_n_sdu);
+                	break;
+                case(CANTP_TX_FRAME_STATE_CF_TX_CONFIRMATION):
+					next_state = CanTp_LDataConTCF(p_n_sdu);
+                	break;
+                default:
+                	break;
+                if (next_state != CANTP_FRAME_STATE_INVALID)
+                {
+                    p_n_sdu->tx.shared.state = next_state;
+                }
+            }
+        }
 
 
 Std_ReturnType CanTp_Transmit(PduIdType CanTpTxSduId, const PduInfoType *CanTpTxInfoPtr) {
@@ -451,35 +458,4 @@ Std_ReturnType CanTp_ReadParameter(PduIdType id, TPParameterType parameter, uint
 }
 #endif /* #if (CANTP_READ_PARAMETER_API == STD_ON) */
 
-PduLengthType getPduLength(
-		const CanTp_AddressingFormantType *formatType,
-		const ISO15765FrameType iso15765Frame, const PduInfoType *CanTpRxPduPtr) {
-	PduLengthType res = 0;
-	uint8 tpci_offset = 0;
 
-	switch (*formatType) {
-	case CANTP_STANDARD:
-		tpci_offset = 0;
-		break;
-	case CANTP_EXTENDED:
-		tpci_offset = 1;
-		break;
-	default:
-		return 0;
-	}
-
-	switch (iso15765Frame) {
-	case SINGLE_FRAME:
-		// Parse the data length from the single frame header.
-		res = CanTpRxPduPtr->SduDataPtr[tpci_offset] & ISO15765_TPCI_DL;
-		break;
-	case FIRST_FRAME:
-		// Parse the data length form the first frame.
-		res = CanTpRxPduPtr->SduDataPtr[tpci_offset + 1] + ((PduLengthType)((CanTpRxPduPtr->SduDataPtr[tpci_offset]) & 0xf) << 8);
-		break;
-	default:
-		res = 0; // TODO: maybe we should have an error code here.
-		break;
-	}
-	return res;
-}
